@@ -1,88 +1,38 @@
 import Card from "react-bootstrap/Card";
 import Hero from "../components/Hero";
-const React = require("react");
-const { useState,useEffect } = require("react");
+import { React, useState, useEffect } from 'react';
+import axios from 'axios';
+
+export function CreateUserForm () {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
 
-const CreateUserForm = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    email: "",
-    firstName: "",
-    lastName: "",
-  });
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    try {
-      const response = await fetch("/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error("HTTP error " + response.status);
+      const createUser = () => {
+          // event.preventDefault();
+          axios.post('/api/v1/users', {
+              username,
+              password,
+              email,
+              firstName,
+              lastName
+          })
+              .then(function (response) {
+                  console.log(response);
+                  // perform any desired action for successful response
+              })
+              .catch(function (error) {
+                  console.log(error);
+                  // perform any desired action for error
+              });
       }
 
-      const handleSubmit = async (event) => {
-        event.preventDefault();
 
-        try {
-          const response = await fetch('/api/users/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP error ${response.status}`);
-          }
-
-          const data = await response.json();
-          console.log('User created:', data);
-        } catch (error) {
-          console.error('Error creating user:', error);
-        }
-      };
-
-      const data = await response.json();
-      console.log("User created:", data);
-    } catch (error) {
-      console.error("Error creating user:", error);
-    }
-  };
-
-  const [groups, setGroups] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-
-    fetch('/api/v1/users')
-        .then(response => response.json())
-        .then(data => {
-          setGroups(data);
-          setLoading(false);
-        })
-  }, []);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  return (
+      return (
     <>
       <Hero hero="loginHero">
       <Card style={{ width: "50rem", marginTop: "-15rem" }} className='card'>
@@ -90,12 +40,12 @@ const CreateUserForm = () => {
           <Card.Title className='cardTitle'>
             <h3> Welcome to the Luxury </h3>
             </Card.Title>
-          <form onSubmit={handleSubmit} className='form-control-login'>
+          <form className='form-control-login'>
             <input
               type='text'
               name='username'
-              value={formData.username}
-              onChange={handleChange}
+              value={username}
+              onChange={(event) =>setUsername(event.target.value)}
               placeholder='Username'
               required
               className='form-control-login'
@@ -103,8 +53,8 @@ const CreateUserForm = () => {
             <input
               type='password'
               name='password'
-              value={formData.password}
-              onChange={handleChange}
+              value={password}
+              onChange={(event) =>setPassword(event.target.value)}
               placeholder='Password'
               required
               className='form-control-login'
@@ -112,8 +62,8 @@ const CreateUserForm = () => {
             <input
               type='email'
               name='email'
-              value={formData.email}
-              onChange={handleChange}
+              value={email}
+              onChange={(event) =>setEmail(event.target.value)}
               placeholder='Email'
               required
               className='form-control-login'
@@ -121,8 +71,8 @@ const CreateUserForm = () => {
             <input
               type='text'
               name='firstName'
-              value={formData.firstName}
-              onChange={handleChange}
+              value={firstName}
+              onChange={(event) =>setFirstName(event.target.value)}
               placeholder='First Name'
               required
               className='form-control-login'
@@ -130,13 +80,13 @@ const CreateUserForm = () => {
             <input
               type='text'
               name='lastName'
-              value={formData.lastName}
-              onChange={handleChange}
+              value={lastName}
+              onChange={(event) =>setLastName(event.target.value)}
               placeholder='Last Name'
               required
               className='form-control-login'
             />
-            <button type='submit' className='btn-primary btn'>
+            <button type='submit' className='btn-primary btn' onClick={createUser}>
               Create User
             </button>
           </form>
